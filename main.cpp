@@ -1,48 +1,53 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <functional>
+#include <Windows.h>
 #include <time.h>
-#include <windows.h>
 
-// コールバック関数のプロトタイプ宣言
-typedef void (*Callback)(int result);
+void setTimeout(int second) {
 
-// サイコロの出目を決定する関数
-int roll_dice() {
-	return rand() % 6 + 1;
+	//ロールバック関数の呼び出し
+	Sleep(second * 1000);
+
 }
 
-// 判定を行うコールバック関数
-void judge_result(int result) {
+auto Funciton = [=](int answer) {
+	//ランダム生成
+	int diceNumber = rand();
 
-	int input;
-
-	printf("サイコロの出目が奇数(1)か偶数(2)か入力:");
-	scanf_s("%d", &input);
-
-	printf("判定中...\n");
-
-	Sleep(3000);
-
-	if ((result % 2 == 1 && input == 1) || (result % 2 == 0 && input == 2)) {
-		printf("正解\n");
+	//答え合わせ
+	if (answer <= 1) {
+		if (answer == diceNumber % 2) {
+			return printf("答えは%d,正解\n", diceNumber % 6);
+		}
+		else if (answer != diceNumber % 2) {
+			return printf("答えは%d,不正解\n", diceNumber % 6);
+		}
 	}
 	else {
-		printf("不正解\n");
+		return printf("指定の数字以外が入力されました");
 	}
 
-	printf("サイコロの目は%d\n", result);
-}
 
-// メイン関数
-int main() {
+	return printf("end");
+	};
 
-	srand((int)time(NULL));
+int main(int argc, const char* argv[]) {
 
-	int dice_result = roll_dice();
+	unsigned int randTime = (unsigned int)time(nullptr);
+	srand(randTime);
 
-	Callback callback = judge_result;
+	int answer;
 
-	callback(dice_result);
+	//入力処理
+	printf("半(1)か丁(0)か\n");
+	scanf_s("%d", &answer);
+
+	printf("start\n");
+
+	setTimeout(5);
+
+	Funciton(answer);
 
 	return 0;
 }
