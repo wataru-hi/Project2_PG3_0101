@@ -1,53 +1,48 @@
 #include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
+#include <windows.h>
 
-int Recursive(int count, int JikyuA, int gokeiA, int JikyuB, int gokeiB) {
+// コールバック関数のプロトタイプ宣言
+typedef void (*Callback)(int result);
 
-	// 何回再起したか
-	count++;
-
-	// それぞれ給料を合計に足し込む
-	gokeiA += JikyuA;
-	gokeiB += JikyuB;
-
-	// 可変給の合計が固定給の合計を超えたら終了
-	if (gokeiA >= gokeiB) {
-
-		printf("%d時間目 || 変動給%d円 総支給%d円 || 固定給%d円 総支給%d円\n", count, JikyuA, gokeiA, JikyuB, gokeiB);
-
-		return(1);
-
-	}
-	else {
-
-		printf("%d時間目 || 変動給%d円 総支給%d円 || 固定給%d円 総支給%d円\n", count, JikyuA, gokeiA, JikyuB, gokeiB);
-
-		// 変動給更新
-		JikyuA = JikyuA * 2 - 50;
-
-		// 再帰処理
-		return (Recursive(count, JikyuA, gokeiA, JikyuB, gokeiB));
-	}
+// サイコロの出目を決定する関数
+int roll_dice() {
+	return rand() % 6 + 1;
 }
 
+// 判定を行うコールバック関数
+void judge_result(int result) {
+
+	int input;
+
+	printf("サイコロの出目が奇数(1)か偶数(2)か入力:");
+	scanf_s("%d", &input);
+
+	printf("判定中...\n");
+
+	Sleep(3000);
+
+	if ((result % 2 == 1 && input == 1) || (result % 2 == 0 && input == 2)) {
+		printf("正解\n");
+	}
+	else {
+		printf("不正解\n");
+	}
+
+	printf("サイコロの目は%d\n", result);
+}
+
+// メイン関数
 int main() {
 
-	// 何回再起したかを数える
-	int count = 0;
+	srand((int)time(NULL));
 
-	// 変動給
-	int JikyuA = 100;
+	int dice_result = roll_dice();
 
-	// 総支給
-	int gokeiA = 0;
+	Callback callback = judge_result;
 
-	// 固定給
-	int JikyuB = 1072;
-
-	// 総支給
-	int gokeiB = 0;
-
-	// 再帰呼び出し
-	Recursive(count, JikyuA, gokeiA, JikyuB, gokeiB);
+	callback(dice_result);
 
 	return 0;
 }
